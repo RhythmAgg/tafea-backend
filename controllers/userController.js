@@ -86,7 +86,7 @@ const loginUser = async (req, res) => {
     }
 };
 
-const requestOTP = async (req, res, next) => {
+const requestOTP = async (req, res) => {
     try {
         const { username, email } = req.body;
 
@@ -123,11 +123,11 @@ const requestOTP = async (req, res, next) => {
 
         res.status(200).json({ message: 'OTP sent successfully.' });
     } catch (err) {
-        next(err);
+        // next(err);
     }
 }
 
-const verifyOTP = async (req, res, next) => {
+const verifyOTP = async (req, res) => {
     try {
         const { mail, otp } = req.body;
 
@@ -154,7 +154,7 @@ const verifyOTP = async (req, res, next) => {
 
         res.status(200).json({ message: 'Login successful', token });
     } catch (err) {
-        next(err);
+        // next(err);
     }
 
 }
