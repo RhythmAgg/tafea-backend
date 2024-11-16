@@ -3,7 +3,9 @@ const express = require('express');
 const connectDB = require('./config/db');
 const logger = require('./utils/logger');
 const errorHandler = require('./utils/errorHandler');
-const loggingRoute = require('./routes/login');
+// const loggingRoute = require('./routes/login');
+const userRoute = require('./routes/userRoutes')
+const messagesRoute = require('./routes/messageRoutes')
 
 connectDB();
 
@@ -14,7 +16,9 @@ app.use(express.json());
 app.use(logger);
 
 // Routes
-app.use('/api', loggingRoute);
+// app.use('/api', loggingRoute);
+app.use('/api/users', userRoute);
+app.use('/api/messages', messagesRoute);
 
 // Error Handler Middleware
 app.use(errorHandler);
