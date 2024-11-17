@@ -26,6 +26,7 @@ fellowSchema.methods.comparePassword = async function (password) {
 // Student Schema
 const studentSchema = new mongoose.Schema({
     name: { type: String, required: true },
+    roll_no: { type: String, required: true},
     classId: { type: mongoose.Schema.Types.ObjectId, ref: 'Class', required: true },
     schoolId: { type: mongoose.Schema.Types.ObjectId, ref: 'School', required: true },
     createdAt: { type: Date, default: Date.now },
@@ -35,6 +36,7 @@ const studentSchema = new mongoose.Schema({
 // Class Schema
 const classSchema = new mongoose.Schema({
     standard: { type: String, required: true },
+    students: { type: [String], required: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 });
@@ -47,24 +49,19 @@ const schoolSchema = new mongoose.Schema({
     updatedAt: { type: Date, default: Date.now },
 });
 
-// Skill Schema
-const skillSchema = new mongoose.Schema({
-    skillName: { type: String, required: true },
+// Lesson Schema
+const lessonSchema = new mongoose.Schema({
+    mailId: {type: String, unique: true},
+    lesson_name: { type: String, required: true , unique: true},
+    activityId: { type: mongoose.Schema.Types.ObjectId, ref: 'Activity' },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
-});
-
-// Value Schema
-const valueSchema = new mongoose.Schema({
-    valueName: { type: String, required: true },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
-});
+})
 
 // Activity Schema
 const activitySchema = new mongoose.Schema({
     activityName: { type: String, required: true },
-    skillIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Skill' }],
+    skills: [{ type: String, required: true }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 });
@@ -82,7 +79,8 @@ const performanceRatingSchema = new mongoose.Schema({
 const activityRatingSchema = new mongoose.Schema({
     fellowId: { type: mongoose.Schema.Types.ObjectId, ref: 'Fellow', required: true },
     activityId: { type: mongoose.Schema.Types.ObjectId, ref: 'Activity', required: true },
-    skillRating: { type: Number, required: true },
+    feedback: { type: String, required: false},
+    skillRating: [{ type: String, required: true }], // pass in the ratings as a list of strings in the format: ["skill_name1: rating_", "skill_name2: rating" ...]
     createdAt: { type: Date, default: Date.now },
 });
 
@@ -114,8 +112,8 @@ const MessageSchema = new mongoose.Schema({
 const Fellow = mongoose.model('Fellow', fellowSchema);
 const Student = mongoose.model('Student', studentSchema);
 const Class = mongoose.model('Class', classSchema);
+const Lesson = mongoose.model('Lesson', lessonSchema);
 const School = mongoose.model('School', schoolSchema);
-const Skill = mongoose.model('Skill', skillSchema);
 const Activity = mongoose.model('Activity', activitySchema);
 const PerformanceRating = mongoose.model('PerformanceRating', performanceRatingSchema);
 const ActivityRating = mongoose.model('ActivityRating', activityRatingSchema);
@@ -128,8 +126,8 @@ module.exports = {
     Fellow,
     Student,
     Class,
+    Lesson,
     School,
-    Skill,
     Activity,
     PerformanceRating,
     ActivityRating,
