@@ -88,10 +88,10 @@ const loginUser = async (req, res) => {
 
 const requestOTP = async (req, res) => {
     try {
-        const { username, email } = req.body;
+        const { email } = req.body;
 
         // Validate input
-        if (!username || !email) {
+        if (!email) {
             throw { status: 400, message: 'Username and email are required.' };
         }
 
