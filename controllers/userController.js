@@ -1,6 +1,5 @@
 const { Fellow } = require('../models/model');
 require("dotenv").config();
-const express = require('express');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
@@ -54,33 +53,6 @@ const addUser = async (req, res) => {
         await newUser.save();
 
         res.status(201).json({ message: 'User created successfully', userId: newUser._id });
-    } catch (error) {
-        res.status(500).json({ message: 'Internal server error', error: error.message });
-    }
-};
-
-// Login User (Authenticate using email and password)
-const loginUser = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-
-        if (!email || !password) {
-            return res.status(400).json({ message: 'Email and password are required' });
-        }
-
-        const user = await Fellow.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Compare the password with the stored hash
-        const isPasswordValid = await user.comparePassword(password);
-        if (!isPasswordValid) {
-            return res.status(401).json({ message: 'Invalid password' });
-        }
-
-        // Generate and return JWT or other session tokens here
-        res.status(200).json({ message: 'Login successful', userId: user._id });
     } catch (error) {
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
@@ -160,4 +132,4 @@ const verifyOTP = async (req, res) => {
 }
 
 
-module.exports = { getUserProfile, addUser, loginUser, requestOTP, verifyOTP };
+module.exports = { getUserProfile, addUser, requestOTP, verifyOTP };
