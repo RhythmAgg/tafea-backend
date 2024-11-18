@@ -1,4 +1,6 @@
 const { Activity, Lesson } = require('../models/model');
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
 const skills = require('../config/skills.json');
 
 const getSkills = async (req, res) => {
@@ -13,7 +15,9 @@ const getSkills = async (req, res) => {
 
 const createLesson = async (req, res) => {
     try {
-        const { mailId, lesson_name, classId, skills } = req.body;
+        const { token, lesson_name, classId, skills } = req.body;
+
+        const mailId = jwt.verify(token, process.env.JWT_SECRET).mail;
 
         // Validate request body
         if (!mailId || !lesson_name || !classId) {

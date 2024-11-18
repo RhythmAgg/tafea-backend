@@ -1,6 +1,9 @@
+require("dotenv").config();
+const jwt = require('jsonwebtoken')
 const {
     Class,
     Student,
+    Fellow
 } = require('../models/model')
 
 const createStudent = async (req, res) => {
@@ -37,11 +40,13 @@ const createStudent = async (req, res) => {
 
 const createClass = async (req, res) => {
     try {
-        const { standard, students } = req.body;
+        const { standard, students, token } = req.body;
 
         if (!standard || !students || !Array.isArray(students)) {
             return res.status(400).json({ message: 'Standard and students (array) are required.' });
         }
+
+        const fellowMail = jwt.verify(token, process.env.JWT_SECRET).mail;
 
         const classDocument = new Class({
             standard,
@@ -69,6 +74,15 @@ const createClass = async (req, res) => {
             createdStudents.push(savedStudent);
         }
 
+        const fellow = await Fellow.findOne({ email: fellowMail });
+        if(!fellow) {
+            return res.status(404).json({ message: 'Fellow not found.' });
+        }
+
+        fellow.classes.push(savedClass._id);
+
+        await fellow.save();
+
         return res.status(200).json({
             message: 'Class and students created successfully.',
             class: savedClass,
@@ -80,7 +94,42 @@ const createClass = async (req, res) => {
     }
 }
 
+const getClassesByFellow = async (req, res) => {
+    try {
+        const { token } = req.query;
+
+        if (!token) {
+            return res.status(400).json({ message: 'Token is required.' });
+        }
+
+        const fellowMail = jwt.verify(token, process.env.JWT_SECRET).mail;
+
+        const fellow = await Fellow.findOne({ email: fellowMail });
+
+        if (!fellow) {
+            return res.status(404).json({ message: 'Fellow not found.' });
+        }
+
+        let classes = []
+
+        for (const classId of fellow.classes) {
+            const classDocument = await Class.findById(classId);
+            classes.push(classDocument);
+        }
+
+        return res.status(200).json({
+            message: 'Classes fetched successfully.',
+            classes: classes,
+        });
+
+    } catch (error) {
+        console.error('Error fetching classes:', error);
+        return res.status(500).json({ message: 'Internal server error.' });
+    }
+}
+
 module.exports = {
     createStudent,
     createClass,
+    getClassesByFellow
 };

@@ -1,7 +1,8 @@
 const express = require('express');
 const {
     createClass,
-    createStudent
+    createStudent,
+    getClassesByFellow
 } = require('../controllers/classController')
 
 const router = express.Router();
@@ -11,6 +12,9 @@ router.post('/newClass', createClass);
 
 // Route to create a new student
 router.post('/newStudent', createStudent);
+
+// Route to get classes by fellow email
+router.get('/getClassesByFellow', getClassesByFellow);
 
 module.exports = router;
 
