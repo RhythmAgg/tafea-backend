@@ -58,16 +58,16 @@ const createSuggestedActivities = async (req, res) => {
         // Create activities and collect their IDs
         const createdActivities = [];
         for (const activity of activities) {
-            const { activityName, activityDescription, skills } = activity;
+            const { activityName, activityDescription, activityProcedure, skills } = activity;
 
-            if (!activityName || !activityDescription || !Array.isArray(skills) || skills.length === 0) {
+            if (!activityName || !activityDescription || !activityProcedure ||  !Array.isArray(skills) || skills.length === 0) {
                 return res.status(400).json({
                     message: 'Each activity must have a name, description, and a non-empty skills array.',
                 });
             }
 
             // Create and save the activity
-            const newActivity = new Activity({ activityName, activityDescription, skills });
+            const newActivity = new Activity({ activityName, activityDescription, activityProcedure, skills });
             const savedActivity = await newActivity.save();
             createdActivities.push(savedActivity._id);
         }
