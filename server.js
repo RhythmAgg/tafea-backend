@@ -10,6 +10,7 @@ const messagesRoute = require('./routes/messageRoutes')
 const classRoute = require('./routes/classRoutes');
 const chatRoute = require('./routes/chatRoutes')
 const feedbackRoute = require('./routes/feedbackRoutes');
+const lessonRoute = require('./routes/lessonRoutes');
 
 connectDB();
 
@@ -27,6 +28,7 @@ app.use('/api/messages', messagesRoute);
 app.use('/api/classes', classRoute);
 app.use('/api/getchat', chatRoute);
 app.use('/api/feedback', feedbackRoute);
+app.use('/api/lessons', lessonRoute);
 
 // Error Handler Middleware
 app.use(errorHandler);

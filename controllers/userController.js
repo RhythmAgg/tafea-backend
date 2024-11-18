@@ -45,6 +45,8 @@ const addFellow = async (req, res) => {
             mobile,
         });
 
+        console.log(newFellow);
+
         await newFellow.save();
 
         res.status(201).json({ message: 'Fellow created successfully', fellowId: newFellow._id });

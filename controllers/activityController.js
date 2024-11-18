@@ -1,4 +1,14 @@
 const { Activity, Lesson } = require('../models/model');
+const skills = require('../config/skills.json');
+
+const getSkills = async (req, res) => {
+    try {
+        res.status(200).json({ skills });
+    } catch (error) {
+        console.error('Error fetching skills:', error.message);
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+};
 
 
 const createLesson = async (req, res) => {
@@ -201,5 +211,6 @@ module.exports = {
     getAllActivities, 
     createLesson, 
     createSuggestedActivities,
-    updateSelectedActivity
+    updateSelectedActivity,
+    getSkills,
 };

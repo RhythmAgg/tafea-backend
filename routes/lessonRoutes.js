@@ -5,7 +5,8 @@ const {
     getAllActivities, 
     createLesson,
     createSuggestedActivities,
-    updateSelectedActivity
+    updateSelectedActivity,
+    getSkills
 } = require('../controllers/activityController')
 
 const router = express.Router();
@@ -27,5 +28,8 @@ router.get('/getLessonPlan', getLessonPlans);
 
 // Route to add a new activity
 router.post('/newActivity', addActivity);
+
+// Route to get skills
+router.get('/getSkills', getSkills);
 
 module.exports = router;

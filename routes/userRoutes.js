@@ -5,7 +5,6 @@ const {
     verifyOTP,
     requestOTP
 } = require('../controllers/userController');
-const { addActivity, getAllActivities } = require('../controllers/activityController');
 // const authMiddleware = require('../middlewares/auth'); // Middleware to verify JWT
 
 const router = express.Router();
@@ -14,13 +13,7 @@ const router = express.Router();
 router.get('/profile', getUserProfile);
 
 // Route to add registered user details to database
-router.post('/add', addFellow)
-
-// Route to get user activities
-router.post('/addActivity', addActivity);
-
-// Route to get activities list
-router.get('/activities', getAllActivities);
+router.post('/addFellow', addFellow)
 
 // Request OTP for login
 router.post('/requestOTP', requestOTP)
