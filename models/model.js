@@ -4,31 +4,16 @@ const mongoose = require('mongoose');
 const fellowSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    passwordHash: { type: String, required: true },
+    mobile: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 });
-
-// Hash the password before saving the user
-fellowSchema.pre('save', async function (next) {
-    if (this.isModified('passwordHash')) {
-        const salt = await bcrypt.genSalt(10); // Generate salt
-        this.passwordHash = await bcrypt.hash(this.passwordHash, salt); // Hash the password
-    }
-    next();
-});
-
-// Compare the password entered by the user with the stored hash
-fellowSchema.methods.comparePassword = async function (password) {
-    return await bcrypt.compare(password, this.passwordHash);
-};
 
 // Student Schema
 const studentSchema = new mongoose.Schema({
     name: { type: String, required: true },
     roll_no: { type: String, required: true},
     classId: { type: mongoose.Schema.Types.ObjectId, ref: 'Class', required: true },
-    schoolId: { type: mongoose.Schema.Types.ObjectId, ref: 'School', required: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 });
@@ -51,9 +36,12 @@ const schoolSchema = new mongoose.Schema({
 
 // Lesson Schema
 const lessonSchema = new mongoose.Schema({
-    mailId: {type: String, unique: true},
-    lesson_name: { type: String, required: true , unique: true},
-    activityId: { type: mongoose.Schema.Types.ObjectId, ref: 'Activity' },
+    mailId: {type: String},
+    lesson_name: { type: String, required: true},
+    suggestedActivities: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Activity' }],
+    selectedActivityId: { type: mongoose.Schema.Types.ObjectId, ref: 'Activity' },
+    classId: { type: mongoose.Schema.Types.ObjectId, ref: 'Class', required: true },
+    skills: [{ type: String, required: true }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 })
@@ -61,6 +49,7 @@ const lessonSchema = new mongoose.Schema({
 // Activity Schema
 const activitySchema = new mongoose.Schema({
     activityName: { type: String, required: true },
+    activityDescription: { type: String, required: true },
     skills: [{ type: String, required: true }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },

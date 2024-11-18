@@ -1,7 +1,7 @@
 const express = require('express');
 const { 
     getUserProfile, 
-    addUser,
+    addFellow,
     verifyOTP,
     requestOTP
 } = require('../controllers/userController');
@@ -14,7 +14,7 @@ const router = express.Router();
 router.get('/profile', getUserProfile);
 
 // Route to add registered user details to database
-router.post('/add', addUser)
+router.post('/add', addFellow)
 
 // Route to get user activities
 router.post('/addActivity', addActivity);

@@ -9,50 +9,45 @@ const OTP_EXPIRATION_TIME = 5 * 60 * 1000;
 // Get User Profile (No authentication)
 const getUserProfile = async (req, res) => {
     try {
-        // Example: Fetching user based on email passed in query parameters
         const { email } = req.query;
         if (!email) {
             return res.status(400).json({ message: 'Email is required' });
         }
 
-        // Fetch user details from the database
-        const user = await Fellow.findOne({ email }).select('name email');
+        const user = await Fellow.findOne({ email });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Respond with the user's name and email
-        res.status(200).json({ name: user.name, email: user.email });
+        res.status(200).json({ name: user.name, email: user.email, mobile: user.mobile });
     } catch (error) {
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 };
 
-// Add User (Create a new user)
-const addUser = async (req, res) => {
+const addFellow = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, mobile } = req.body;
 
-        if (!name || !email || !password) {
-            return res.status(400).json({ message: 'Name, email, and password are required' });
+        if (!name || !email || !mobile) {
+            return res.status(400).json({ message: 'Name, email, and mobile are required' });
         }
 
-        // Check if a user with the same email already exists
-        const existingUser = await Fellow.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'User with this email already exists' });
+        const existingFellow = await Fellow.findOne({ email });
+        if (existingFellow) {
+            return res.status(400).json({ message: 'Fellow with this email already exists' });
         }
 
         // Create a new user without manually hashing the password (it's done by the schema's pre-save hook)
-        const newUser = new Fellow({
+        const newFellow = new Fellow({
             name,
             email,
-            passwordHash: password, // The password will be hashed automatically in the schema
+            mobile,
         });
 
-        await newUser.save();
+        await newFellow.save();
 
-        res.status(201).json({ message: 'User created successfully', userId: newUser._id });
+        res.status(201).json({ message: 'Fellow created successfully', fellowId: newFellow._id });
     } catch (error) {
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
@@ -64,7 +59,13 @@ const requestOTP = async (req, res) => {
 
         // Validate input
         if (!email) {
-            throw { status: 400, message: 'Username and email are required.' };
+            return res.status(400).json({ message: 'Email is required.' });
+        }
+
+        // Check if a Fellow exists with this email
+        const fellow = await Fellow.findOne({ email });
+        if (!fellow) {
+            return res.status(403).json({ message: 'Fellow not found with this email.' });
         }
 
         // Generate OTP
@@ -95,7 +96,8 @@ const requestOTP = async (req, res) => {
 
         res.status(200).json({ message: 'OTP sent successfully.' });
     } catch (err) {
-        // next(err);
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+
     }
 }
 
@@ -126,10 +128,10 @@ const verifyOTP = async (req, res) => {
 
         res.status(200).json({ message: 'Login successful', token });
     } catch (err) {
-        // next(err);
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 
 }
 
 
-module.exports = { getUserProfile, addUser, requestOTP, verifyOTP };
+module.exports = { getUserProfile, addFellow, requestOTP, verifyOTP };
