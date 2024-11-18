@@ -8,6 +8,7 @@ const errorHandler = require('./utils/errorHandler');
 const userRoute = require('./routes/userRoutes')
 const messagesRoute = require('./routes/messageRoutes')
 const classRoute = require('./routes/classRoutes');
+const chatRoute = require('./routes/chatRoutes')
 
 connectDB();
 
@@ -23,6 +24,7 @@ app.use(logger);
 app.use('/api/users', userRoute);
 app.use('/api/messages', messagesRoute);
 app.use('/api/classes', classRoute);
+app.use('/api/getchat', chatRoute)
 
 // Error Handler Middleware
 app.use(errorHandler);

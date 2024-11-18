@@ -1,5 +1,6 @@
+require('dotenv').config();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const apiKey = "";
+const apiKey = process.env.GEMINI_API;
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
@@ -44,7 +45,7 @@ const generationConfig = {
     },
 };
 
-app.post('/api/chat', async (req, res) => {
+const getChat =  async (req, res) => {
     try {
         const less_dict = req.body;
 
@@ -63,4 +64,6 @@ app.post('/api/chat', async (req, res) => {
         console.error('Error:', error);
         res.status(500).json({ error: 'An error occurred' });
     }
-});
+};
+
+module.exports = { getChat };
