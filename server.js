@@ -7,6 +7,7 @@ const errorHandler = require('./utils/errorHandler');
 // const loggingRoute = require('./routes/login');
 const userRoute = require('./routes/userRoutes')
 const messagesRoute = require('./routes/messageRoutes')
+const classRoute = require('./routes/classRoutes');
 
 connectDB();
 
@@ -21,6 +22,7 @@ app.use(logger);
 // app.use('/api', loggingRoute);
 app.use('/api/users', userRoute);
 app.use('/api/messages', messagesRoute);
+app.use('/api/classes', classRoute);
 
 // Error Handler Middleware
 app.use(errorHandler);

@@ -1,9 +1,132 @@
-const { Activity } = require('../models/model');
+const { Activity, Lesson } = require('../models/model');
+
+
+const createLesson = async (req, res) => {
+    try {
+        const { mailId, lesson_name, classId, skills } = req.body;
+
+        // Validate request body
+        if (!mailId || !lesson_name || !classId) {
+            return res.status(400).json({ message: 'mailId / lesson_name / classId are required.' });
+        }
+
+        if(!Array.isArray(skills) || skills.length === 0) {
+            return res.status(400).json({ message: 'Skills must be a non-empty array of strings' });
+        }
+
+        // Create a new lesson document
+        const lesson = new Lesson({
+            mailId,
+            lesson_name,
+            classId,
+            skills
+        });
+
+        // Save the document to the database
+        const savedLesson = await lesson.save();
+
+        // Respond with the created lesson
+        return res.status(200).json({
+            message: 'Lesson created successfully.',
+            lesson: savedLesson,
+        });
+    } catch (error) {
+        console.error('Error creating lesson:', error);
+        return res.status(500).json({ message: 'Internal server error.' });
+    }
+}
+
+const createSuggestedActivities = async (req, res) => {
+    try {
+        const { activities, lessonId } = req.body;
+
+        // Validate input
+        if (!activities || !Array.isArray(activities) || activities.length === 0) {
+            return res.status(400).json({ message: 'Activities array is required and cannot be empty.' });
+        }
+
+        if (!lessonId) {
+            return res.status(400).json({ message: 'Lesson ID is required.' });
+        }
+
+        // Check if the lesson exists
+        const lesson = await Lesson.findById(lessonId);
+        if (!lesson) {
+            return res.status(404).json({ message: 'Lesson not found.' });
+        }
+
+        // Create activities and collect their IDs
+        const createdActivities = [];
+        for (const activity of activities) {
+            const { activityName, activityDescription, skills } = activity;
+
+            if (!activityName || !activityDescription || !Array.isArray(skills) || skills.length === 0) {
+                return res.status(400).json({
+                    message: 'Each activity must have a name, description, and a non-empty skills array.',
+                });
+            }
+
+            // Create and save the activity
+            const newActivity = new Activity({ activityName, activityDescription, skills });
+            const savedActivity = await newActivity.save();
+            createdActivities.push(savedActivity._id);
+        }
+
+        lesson.suggestedActivities.push(...createdActivities);
+        await lesson.save();
+
+        return res.status(200).json({
+            message: 'Activities created and lesson updated successfully.',
+            activities: createdActivities,
+            lesson,
+        });
+    } catch (error) {
+        console.error('Error creating activities and updating lesson:', error);
+        return res.status(500).json({ message: 'Internal server error.' });
+    }
+}
+
+const updateSelectedActivity = async (req, res) => {
+    try {
+        const { lessonId, activityId } = req.body;
+
+        // Validate input
+        if (!lessonId || !activityId) {
+            return res.status(400).json({ message: 'Lesson ID and Activity ID are required.' });
+        }
+
+        // Check if the lesson exists
+        const lesson = await Lesson.findById(lessonId);
+        if (!lesson) {
+            return res.status(404).json({ message: 'Lesson not found.' });
+        }
+
+        // Check if the activity exists
+        const activity = await Activity.findById(activityId);
+        if (!activity) {
+            return res.status(404).json({ message: 'Activity not found.' });
+        }
+
+        // Update the selectedActivity field
+        lesson.selectedActivity = activityId;
+        lesson.updatedAt = Date.now();
+        await lesson.save();
+
+        // Respond with the updated lesson
+        return res.status(200).json({
+            message: 'Selected activity updated successfully.',
+            lesson,
+        });
+    } catch (error) {
+        console.error('Error updating selected activity:', error);
+        return res.status(500).json({ message: 'Internal server error.' });
+    }
+}
 
 // Add Activity
 const addActivity = async (req, res) => {
     try {
-        const { activityName, skills } = req.body;
+        const { activityName, activityDescription, skills } = req.body;
 
         // Validate the request body
         if (!activityName) {
@@ -72,4 +195,11 @@ const getLessonPlans = async (req, res) => {
 };
 
 
-module.exports = { addActivity, getLessonPlans, getAllActivities };
+module.exports = { 
+    addActivity, 
+    getLessonPlans,
+    getAllActivities, 
+    createLesson, 
+    createSuggestedActivities,
+    updateSelectedActivity
+};
