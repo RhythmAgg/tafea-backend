@@ -185,7 +185,9 @@ const getAllActivities = async (req, res) => {
 const getLessonPlans = async (req, res) => {
     try {
         // Fetch mailId from query parameters
-        const { mailId } = req.query;
+        const { token } = req.query;
+
+        const mailId = jwt.verify(token, process.env.JWT_SECRET).mail;
 
         if (!mailId) {
             return res.status(400).json({ message: 'Mail ID is required.' });
@@ -193,8 +195,6 @@ const getLessonPlans = async (req, res) => {
 
         // Fetch lesson plans associated with this mail ID
         const lessonPlans = await Lesson.find({ mailId })
-            .populate('activityId', 'activityName skills') // Populate activity details if needed
-            .select('lesson_name activityId createdAt updatedAt'); // Select specific fields to return
 
         if (!lessonPlans || lessonPlans.length === 0) {
             return res.status(404).json({ message: 'No lesson plans found for this email ID.' });

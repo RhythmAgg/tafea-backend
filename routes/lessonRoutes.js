@@ -24,7 +24,7 @@ router.put('/updateSelectedActivity', updateSelectedActivity);
 router.get('/getAllActivities', getAllActivities);
 
 // Route to get lesson plans by fellow email
-router.get('/getLessonPlan', getLessonPlans);
+router.get('/getLessonPlans', getLessonPlans);
 
 // Route to add a new activity
 router.post('/newActivity', addActivity);
