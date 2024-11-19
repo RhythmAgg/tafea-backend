@@ -12,6 +12,33 @@ const getSkills = async (req, res) => {
     }
 };
 
+const updateLessonProgress = async (req, res) => {
+    try {
+        const { lessonId, progress } = req.body;
+
+        if (!lessonId || !progress) {
+            return res.status(400).json({ message: 'Lesson ID and progress are required.' });
+        }
+
+        const lesson = await Lesson.findById(lessonId)
+        if (!lesson) {
+            return res.status(404).json({ message: 'Lesson not found.' });
+        }
+
+        lesson.progress = progress;
+
+        await lesson.save();
+
+        return res.status(200).json({
+            message: 'Lesson progress updated successfully.',
+            lesson,
+        });
+    } catch (error) {
+        console.error('Error updating lesson progress:', error);
+        return res.status(500).json({ message: 'Internal server error.' });
+    }
+}
+
 
 const createLesson = async (req, res) => {
     try {
@@ -223,4 +250,5 @@ module.exports = {
     createSuggestedActivities,
     updateSelectedActivity,
     getSkills,
+    updateLessonProgress
 };

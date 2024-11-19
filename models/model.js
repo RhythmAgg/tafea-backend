@@ -39,6 +39,7 @@ const schoolSchema = new mongoose.Schema({
 const lessonSchema = new mongoose.Schema({
     mailId: {type: String},
     lesson_name: { type: String, required: true},
+    progress: {type: Boolean, default: false},
     suggestedActivities: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Activity' }],
     selectedActivityId: { type: mongoose.Schema.Types.ObjectId, ref: 'Activity' },
     classId: { type: mongoose.Schema.Types.ObjectId, ref: 'Class', required: true },
