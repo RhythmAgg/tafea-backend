@@ -52,7 +52,6 @@ const activitySchema = new mongoose.Schema({
     activityName: { type: String, required: true },
     activityDescription: { type: String, required: true },
     activityProcedure: { type: String, required: true },
-    skills: [{ type: String, required: true }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 });

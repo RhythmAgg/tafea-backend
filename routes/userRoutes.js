@@ -10,7 +10,7 @@ const {
 const router = express.Router();
 
 // Route to get user profile
-router.get('/profile', getUserProfile);
+router.get('/getFellowProfile', getUserProfile);
 
 // Route to add registered user details to database
 router.post('/addFellow', addFellow)

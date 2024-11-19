@@ -72,21 +72,26 @@ const createSuggestedActivities = async (req, res) => {
         // Create activities and collect their IDs
         const createdActivities = [];
         for (const activity of activities) {
-            const { activityName, activityDescription, activityProcedure, skills } = activity;
+            const { activity_name, description, procedure } = activity;
 
-            if (!activityName || !activityDescription || !activityProcedure ||  !Array.isArray(skills) || skills.length === 0) {
+            if (!activity_name || !description || !procedure ) {
                 return res.status(400).json({
-                    message: 'Each activity must have a name, description, and a non-empty skills array.',
+                    message: 'Each activity must have a name, description',
                 });
             }
 
             // Create and save the activity
-            const newActivity = new Activity({ activityName, activityDescription, activityProcedure, skills });
+            const newActivity = new Activity({ 
+                activityName: activity_name, 
+                activityDescription: description, 
+                activityProcedure: procedure 
+            });
             const savedActivity = await newActivity.save();
             createdActivities.push(savedActivity._id);
         }
 
         lesson.suggestedActivities.push(...createdActivities);
+        lesson.selectedActivityId = createdActivities[0];
         await lesson.save();
 
         return res.status(200).json({
@@ -102,6 +107,7 @@ const createSuggestedActivities = async (req, res) => {
 
 const updateSelectedActivity = async (req, res) => {
     try {
+        console.log(req.body);
         const { lessonId, activityId } = req.body;
 
         // Validate input
@@ -122,7 +128,7 @@ const updateSelectedActivity = async (req, res) => {
         }
 
         // Update the selectedActivity field
-        lesson.selectedActivity = activityId;
+        lesson.selectedActivityId = activityId;
         lesson.updatedAt = Date.now();
         await lesson.save();
 

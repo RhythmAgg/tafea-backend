@@ -1,4 +1,7 @@
 require('dotenv').config();
+const {
+    Class
+} = require('../models/model')
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const apiKey = process.env.GEMINI_API;
 const genAI = new GoogleGenerativeAI(apiKey);
@@ -47,13 +50,29 @@ const generationConfig = {
 
 const getChat =  async (req, res) => {
     try {
-        const less_dict = req.body;
+        const { token, lesson } = req.body;
+
+        // Validate input
+        if (!lesson?.classId || !lesson?.skills) {
+            return res.status(400).json({ error: 'classId and skills are required.' });
+        }
+
+        const classId = lesson.classId;
+        const skills = lesson.skills;
+
+
+        const classData = await Class.findById(classId); // Replace with your Class model query
+        if (!classData) {
+            return res.status(404).json({ error: 'Class not found.' });
+        }
+
+        const grade = classData.standard;
 
         const chatSession = model.startChat({
             generationConfig,
             history: [],
         });
-        const result = await chatSession.sendMessage(`grade: ${less_dict['grade']}\nskills: ${less_dict['skills']}`).then((response) => {
+        const result = await chatSession.sendMessage(`grade: ${grade}\nskills: ${skills}`).then((response) => {
             return response.response.text();
         });
 

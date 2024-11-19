@@ -26,7 +26,7 @@ app.use(logger);
 app.use('/api/users', userRoute);
 app.use('/api/messages', messagesRoute);
 app.use('/api/classes', classRoute);
-app.use('/api/getchat', chatRoute);
+app.use('/api/chat', chatRoute);
 app.use('/api/feedback', feedbackRoute);
 app.use('/api/lessons', lessonRoute);
 

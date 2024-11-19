@@ -18,7 +18,7 @@ router.post('/newLesson', createLesson);
 router.post('/addSuggestedActivities', createSuggestedActivities);
 
 // Route to update selected activity
-router.put('/updateSelectedActivity', updateSelectedActivity);
+router.post('/updateSelectedActivity', updateSelectedActivity);
 
 // Route to get all activities
 router.get('/getAllActivities', getAllActivities);

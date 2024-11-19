@@ -9,7 +9,10 @@ const OTP_EXPIRATION_TIME = 5 * 60 * 1000;
 // Get User Profile (No authentication)
 const getUserProfile = async (req, res) => {
     try {
-        const { email } = req.query;
+        const { token } = req.query;
+
+        const email  = jwt.verify(token, process.env.JWT_SECRET).mail;
+
         if (!email) {
             return res.status(400).json({ message: 'Email is required' });
         }
